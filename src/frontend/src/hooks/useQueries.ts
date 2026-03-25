@@ -295,3 +295,17 @@ export function useAssignRole() {
       actor!.assignCallerUserRole(user, role),
   });
 }
+
+export function useBootstrapAdmin() {
+  const { actor } = useActor();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      if (!actor) throw new Error("Not connected");
+      return actor.bootstrapAdmin();
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["isAdmin"] });
+    },
+  });
+}

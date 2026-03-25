@@ -156,6 +156,7 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
+    bootstrapAdmin(): Promise<void>;
     addGalleryImages(destinationId: UUID, newImages: Array<ExternalBlob>): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     cancelBookingClient(bookingId: UUID): Promise<void>;

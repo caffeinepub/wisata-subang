@@ -37,12 +37,25 @@ module {
     };
   };
 
+  // Bootstrap: if no admin exists yet, caller becomes admin
+  public func bootstrapFirstAdmin(state : AccessControlState, caller : Principal) {
+    if (caller.isAnonymous()) {
+      Runtime.trap("Anonymous users cannot become admin");
+    };
+    if (state.adminAssigned) {
+      Runtime.trap("Admin sudah ada. Hubungi admin yang ada untuk mendapatkan akses.");
+    };
+    state.userRoles.add(caller, #admin);
+    state.adminAssigned := true;
+  };
+
   public func getUserRole(state : AccessControlState, caller : Principal) : UserRole {
     if (caller.isAnonymous()) { return #guest };
     switch (state.userRoles.get(caller)) {
       case (?role) { role };
       case (null) {
-        Runtime.trap("User is not registered");
+        // Return guest for unregistered users instead of trapping
+        #guest;
       };
     };
   };
@@ -52,6 +65,9 @@ module {
       Runtime.trap("Unauthorized: Only admins can assign user roles");
     };
     state.userRoles.add(user, role);
+    if (role == #admin) {
+      state.adminAssigned := true;
+    };
   };
 
   public func hasPermission(state : AccessControlState, caller : Principal, requiredRole : UserRole) : Bool {

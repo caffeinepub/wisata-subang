@@ -247,6 +247,12 @@ actor {
     userProfiles.add(caller, profile);
   };
 
+
+  // Bootstrap admin (only works if no admin exists yet)
+  public shared ({ caller }) func bootstrapAdmin() : async () {
+    AccessControl.bootstrapFirstAdmin(accessControlState, caller);
+  };
+
   // Destination Management
   public shared ({ caller }) func createDestination(input : InputTourDestination) : async UUID {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {

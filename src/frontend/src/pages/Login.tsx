@@ -9,10 +9,10 @@ export default function Login() {
   const router = useRouter();
 
   useEffect(() => {
-    if (loginStatus === "success" && identity) {
-      router.navigate({ to: "/" });
+    if (identity && !identity.getPrincipal().isAnonymous()) {
+      router.navigate({ to: "/admin" });
     }
-  }, [loginStatus, identity, router]);
+  }, [identity, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
@@ -46,7 +46,7 @@ export default function Login() {
             "Masuk / Daftar"
           )}
         </Button>
-        {isLoginError && (
+        {isLoginError && loginStatus === "loginError" && (
           <p
             className="mt-4 text-sm text-destructive"
             data-ocid="login.error_state"

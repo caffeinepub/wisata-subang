@@ -7,6 +7,7 @@ import {
   MapPin,
   Menu,
   Package,
+  ShieldCheck,
   Users,
   X,
 } from "lucide-react";
@@ -21,21 +22,28 @@ const NAV_ITEMS = [
   { to: "/admin/hotels", label: "Hotel", icon: Hotel },
   { to: "/admin/agencies", label: "Agen Wisata", icon: Users },
   { to: "/admin/bookings", label: "Pemesanan", icon: CalendarCheck },
+  { to: "/admin/roles", label: "Kelola Role", icon: ShieldCheck },
 ];
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { clear, identity } = useInternetIdentity();
-  const { data: isAdmin, isLoading } = useIsAdmin();
+  const { data: isAdmin, isLoading, isError } = useIsAdmin();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !isAdmin) {
+    // If not authenticated at all, redirect to login
+    if (!identity || identity.getPrincipal().isAnonymous()) {
+      router.navigate({ to: "/login" });
+      return;
+    }
+    // If admin check failed or returned false, redirect to login
+    if (!isLoading && !isError && isAdmin === false) {
       router.navigate({ to: "/login" });
     }
-  }, [isAdmin, isLoading, router]);
+  }, [isAdmin, isLoading, isError, identity, router]);
 
-  if (isLoading) {
+  if (isLoading || !identity || identity.getPrincipal().isAnonymous()) {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
@@ -49,7 +57,7 @@ export default function AdminLayout() {
     );
   }
 
-  if (!isAdmin) return null;
+  if (!isAdmin && !isError) return null;
 
   return (
     <div className="flex min-h-screen bg-secondary/20">

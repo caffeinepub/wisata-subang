@@ -171,6 +171,7 @@ export interface _SERVICE {
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'bootstrapAdmin' : ActorMethod<[], undefined>,
   'addGalleryImages' : ActorMethod<[UUID, Array<ExternalBlob>], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'cancelBookingClient' : ActorMethod<[UUID], undefined>,

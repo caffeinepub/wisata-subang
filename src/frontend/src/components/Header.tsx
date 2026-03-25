@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { ChevronDown, MapPin, Menu, Search, X } from "lucide-react";
+import { ChevronDown, MapPin, Menu, Navigation, Search, X } from "lucide-react";
 import { useState } from "react";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import { useIsAdmin } from "../hooks/useQueries";
@@ -61,6 +61,14 @@ export default function Header() {
             data-ocid="nav.booking.link"
           >
             Booking
+          </Link>
+          <Link
+            to="/rute"
+            className="flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-green-dark transition-colors"
+            data-ocid="nav.routes.link"
+          >
+            <Navigation className="w-3.5 h-3.5" />
+            Rute
           </Link>
           {isAdmin && (
             <Link
@@ -135,6 +143,7 @@ export default function Header() {
               { to: "/hotels", label: "Hotel" },
               { to: "/agencies", label: "Tour & Travel" },
               { to: "/booking", label: "Booking" },
+              { to: "/rute", label: "Rute" },
             ].map((item) => (
               <Link
                 key={item.to}

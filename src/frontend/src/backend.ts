@@ -249,6 +249,7 @@ export interface backendInterface {
     _caffeineStorageRefillCashier(refillInformation: _CaffeineStorageRefillInformation | null): Promise<_CaffeineStorageRefillResult>;
     _caffeineStorageUpdateGatewayPrincipals(): Promise<void>;
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
+    bootstrapAdmin(): Promise<void>;
     addGalleryImages(destinationId: UUID, newImages: Array<ExternalBlob>): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     cancelBookingClient(bookingId: UUID): Promise<void>;
@@ -412,6 +413,18 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor._initializeAccessControlWithSecret(arg0);
             return result;
+        }
+    }
+    async bootstrapAdmin(): Promise<void> {
+        if (this.processError) {
+            try {
+                return await this.actor.bootstrapAdmin();
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            return await this.actor.bootstrapAdmin();
         }
     }
     async addGalleryImages(arg0: UUID, arg1: Array<ExternalBlob>): Promise<void> {

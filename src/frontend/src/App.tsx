@@ -15,12 +15,14 @@ import Home from "./pages/Home";
 import Hotels from "./pages/Hotels";
 import Login from "./pages/Login";
 import Packages from "./pages/Packages";
+import Routes from "./pages/Routes";
 import AdminAgencies from "./pages/admin/AdminAgencies";
 import AdminBookings from "./pages/admin/AdminBookings";
 import AdminDestinations from "./pages/admin/AdminDestinations";
 import AdminHotels from "./pages/admin/AdminHotels";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminPackages from "./pages/admin/AdminPackages";
+import AdminRoles from "./pages/admin/AdminRoles";
 import Dashboard from "./pages/admin/Dashboard";
 
 // Root route - wraps public pages in Layout, admin in its own layout
@@ -87,6 +89,12 @@ const loginRoute = createRoute({
   component: Login,
 });
 
+const routesPageRoute = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: "/rute",
+  component: Routes,
+});
+
 // Admin routes (no shared layout wrapper - AdminLayout handles its own structure)
 const adminBaseRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -130,6 +138,12 @@ const adminBookingsRoute = createRoute({
   component: AdminBookings,
 });
 
+const adminRolesRoute = createRoute({
+  getParentRoute: () => adminBaseRoute,
+  path: "/roles",
+  component: AdminRoles,
+});
+
 const routeTree = rootRoute.addChildren([
   layoutRoute.addChildren([
     homeRoute,
@@ -140,6 +154,7 @@ const routeTree = rootRoute.addChildren([
     agenciesRoute,
     bookingRoute,
     loginRoute,
+    routesPageRoute,
   ]),
   adminBaseRoute.addChildren([
     adminDashboardRoute,
@@ -148,6 +163,7 @@ const routeTree = rootRoute.addChildren([
     adminHotelsRoute,
     adminAgenciesRoute,
     adminBookingsRoute,
+    adminRolesRoute,
   ]),
 ]);
 
