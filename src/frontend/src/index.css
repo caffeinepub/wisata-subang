@@ -1,0 +1,78 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.75rem;
+    /* Primary dark green #0E5A3F */
+    --primary: 0.38 0.11 160;
+    --primary-foreground: 1 0 0;
+    /* Background white */
+    --background: 1 0 0;
+    --foreground: 0.22 0.015 254;
+    /* Card */
+    --card: 1 0 0;
+    --card-foreground: 0.22 0.015 254;
+    --popover: 1 0 0;
+    --popover-foreground: 0.22 0.015 254;
+    /* Secondary */
+    --secondary: 0.97 0.005 240;
+    --secondary-foreground: 0.22 0.015 254;
+    /* Muted */
+    --muted: 0.97 0.005 240;
+    --muted-foreground: 0.52 0.01 254;
+    /* Accent orange #E67E22 */
+    --accent: 0.68 0.17 50;
+    --accent-foreground: 1 0 0;
+    /* Destructive */
+    --destructive: 0.577 0.245 27.325;
+    --destructive-foreground: 1 0 0;
+    /* Border/Input */
+    --border: 0.91 0.005 240;
+    --input: 0.91 0.005 240;
+    --ring: 0.38 0.11 160;
+    /* Charts */
+    --chart-1: 0.68 0.17 50;
+    --chart-2: 0.38 0.11 160;
+    --chart-3: 0.6 0.118 184.704;
+    --chart-4: 0.828 0.189 84.429;
+    --chart-5: 0.577 0.245 27.325;
+    /* Sidebar - dark green */
+    --sidebar: 0.27 0.09 160;
+    --sidebar-foreground: 1 0 0;
+    --sidebar-primary: 0.68 0.17 50;
+    --sidebar-primary-foreground: 1 0 0;
+    --sidebar-accent: 0.32 0.1 160;
+    --sidebar-accent-foreground: 1 0 0;
+    --sidebar-border: 0.32 0.1 160;
+    --sidebar-ring: 0.68 0.17 50;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Poppins", sans-serif;
+  }
+}
+
+/* Custom utilities */
+.hero-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(14, 90, 63, 0.3) 0%,
+    rgba(14, 90, 63, 0.7) 100%
+  );
+}
+
+.section-green {
+  background: linear-gradient(135deg, #0e5a3f 0%, #0b4f39 100%);
+}
+
+.section-footer {
+  background: #0a3f30;
+}
