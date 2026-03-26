@@ -1,4 +1,4 @@
-import { Link, Outlet, useRouter } from "@tanstack/react-router";
+import { Link, Outlet, useLocation, useRouter } from "@tanstack/react-router";
 import {
   CalendarCheck,
   Hotel,
@@ -27,23 +27,41 @@ const NAV_ITEMS = [
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { clear, identity } = useInternetIdentity();
-  const { data: isAdmin, isLoading, isError } = useIsAdmin();
+  const { clear, identity, isInitializing } = useInternetIdentity();
+  const { data: isAdmin, isLoading: isAdminLoading } = useIsAdmin();
   const router = useRouter();
+  const location = useLocation();
+
+  // /admin/roles is accessible without admin role (for bootstrapping)
+  const isRolesPage = location.pathname === "/admin/roles";
+
+  const isAuthenticated = identity && !identity.getPrincipal().isAnonymous();
 
   useEffect(() => {
-    // If not authenticated at all, redirect to login
-    if (!identity || identity.getPrincipal().isAnonymous()) {
+    // Wait until identity is resolved
+    if (isInitializing) return;
+
+    // Redirect to login if not authenticated
+    if (!isAuthenticated) {
       router.navigate({ to: "/login" });
       return;
     }
-    // If admin check failed or returned false, redirect to login
-    if (!isLoading && !isError && isAdmin === false) {
+
+    // For non-roles pages, redirect if not admin (after check completes)
+    if (!isRolesPage && !isAdminLoading && isAdmin === false) {
       router.navigate({ to: "/login" });
     }
-  }, [isAdmin, isLoading, isError, identity, router]);
+  }, [
+    isAdmin,
+    isAdminLoading,
+    isAuthenticated,
+    isInitializing,
+    isRolesPage,
+    router,
+  ]);
 
-  if (isLoading || !identity || identity.getPrincipal().isAnonymous()) {
+  // Show loading spinner while identity is initializing
+  if (isInitializing || !isAuthenticated) {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
@@ -57,7 +75,25 @@ export default function AdminLayout() {
     );
   }
 
-  if (!isAdmin && !isError) return null;
+  // For non-roles pages, show loading while admin check is in progress
+  if (!isRolesPage && isAdminLoading) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        data-ocid="admin.loading_state"
+      >
+        <div
+          className="animate-spin w-8 h-8 border-2 rounded-full"
+          style={{ borderTopColor: "#0E5A3F", borderColor: "#E5E7EB" }}
+        />
+      </div>
+    );
+  }
+
+  // Block non-admin access to non-roles pages
+  if (!isRolesPage && !isAdmin) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen bg-secondary/20">

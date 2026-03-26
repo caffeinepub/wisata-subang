@@ -14,7 +14,11 @@ import { useEffect, useState } from "react";
 import type { TourDestination } from "../backend";
 import { useActiveDestinations } from "../hooks/useQueries";
 
-const POINT_A = { lat: -6.5833, lng: 107.4667, label: "Alun-Alun Subang" };
+const POINT_A = {
+  lat: -6.57,
+  lng: 107.7588,
+  label: "Alun-Alun Subang, Kota Subang",
+};
 
 interface OsrmStep {
   maneuver: {
@@ -183,8 +187,8 @@ export default function RoutesPage() {
             Rute Menuju Destinasi
           </h1>
           <p className="text-white/75 max-w-xl mx-auto">
-            Dari Alun-Alun Subang menuju destinasi wisata pilihanmu — lengkap
-            dengan petunjuk arah.
+            Dari Kota Subang (Alun-Alun Subang) menuju destinasi wisata
+            pilihanmu — lengkap dengan petunjuk arah.
           </p>
         </motion.div>
       </div>
@@ -373,7 +377,8 @@ export default function RoutesPage() {
               Pilih destinasi untuk melihat rute perjalanan
             </p>
             <p className="text-sm mt-1 opacity-70">
-              Rute akan ditampilkan dari Alun-Alun Subang menuju tujuanmu
+              Rute akan ditampilkan dari Kota Subang (Alun-Alun Subang) menuju
+              tujuanmu
             </p>
           </motion.div>
         )}

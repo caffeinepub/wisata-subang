@@ -11,7 +11,11 @@ import { Switch } from "@/components/ui/switch";
 import { Edit, Loader2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import type { InputTourDestination, TourDestination } from "../../backend";
+import type {
+  ExternalBlob,
+  InputTourDestination,
+  TourDestination,
+} from "../../backend";
 import {
   useAdminDestinationMutations,
   useAllDestinations,
@@ -31,6 +35,8 @@ export default function AdminDestinations() {
     featured: boolean;
     lat: string;
     lng: string;
+    photoUrl: string;
+    photoFile: File | null;
   }>({
     name: "",
     description: "",
@@ -40,6 +46,8 @@ export default function AdminDestinations() {
     featured: false,
     lat: "",
     lng: "",
+    photoUrl: "",
+    photoFile: null,
   });
 
   const openCreate = () => {
@@ -53,6 +61,8 @@ export default function AdminDestinations() {
       featured: false,
       lat: "",
       lng: "",
+      photoUrl: "",
+      photoFile: null,
     });
     setOpen(true);
   };
@@ -67,11 +77,23 @@ export default function AdminDestinations() {
       featured: d.featured,
       lat: d.location.latitude.toString(),
       lng: d.location.longitude.toString(),
+      photoUrl: "",
+      photoFile: null,
     });
     setOpen(true);
   };
 
   const save = async () => {
+    let mainImage: ExternalBlob | undefined = undefined;
+    if (form.photoFile) {
+      const bytes = new Uint8Array(await form.photoFile.arrayBuffer());
+      mainImage = (await import("../../backend")).ExternalBlob.fromBytes(bytes);
+    } else if (form.photoUrl.trim()) {
+      mainImage = (await import("../../backend")).ExternalBlob.fromURL(
+        form.photoUrl.trim(),
+      );
+    }
+
     const input: InputTourDestination = {
       name: form.name,
       description: form.description,
@@ -83,6 +105,7 @@ export default function AdminDestinations() {
         latitude: Number.parseFloat(form.lat || "0"),
         longitude: Number.parseFloat(form.lng || "0"),
       },
+      mainImage,
     };
     try {
       if (editing) await update.mutateAsync({ id: editing.id, input });
@@ -204,7 +227,7 @@ export default function AdminDestinations() {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="max-w-lg"
+          className="max-w-lg max-h-[90vh] overflow-y-auto"
           data-ocid="admin.destinations.dialog"
         >
           <DialogHeader>
@@ -262,6 +285,42 @@ export default function AdminDestinations() {
                 }
                 data-ocid="admin.destinations.directions.input"
               />
+            </div>
+            <div>
+              <Label>Foto Utama</Label>
+              <div className="space-y-2">
+                <Input
+                  placeholder="URL foto (https://...)"
+                  value={form.photoUrl}
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      photoUrl: e.target.value,
+                      photoFile: null,
+                    }))
+                  }
+                  data-ocid="admin.destinations.photo_url.input"
+                />
+                <div className="text-xs text-muted-foreground text-center">
+                  — atau —
+                </div>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    setForm((f) => ({ ...f, photoFile: file, photoUrl: "" }));
+                  }}
+                  data-ocid="admin.destinations.photo_file.input"
+                />
+                {(form.photoUrl || form.photoFile) && (
+                  <p className="text-xs text-green-700">
+                    {form.photoFile
+                      ? `File dipilih: ${form.photoFile.name}`
+                      : "URL foto ditambahkan"}
+                  </p>
+                )}
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>

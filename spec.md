@@ -1,29 +1,24 @@
-# Wisata Subang
+# Wisata Subang - Version 7 Fixes
 
 ## Current State
-New project, no existing application.
+App has 3 issues:
+1. Routes page Point A coordinates are set to Purwakarta (~107.4667) instead of Subang (~107.7588)
+2. DestinationDetail page throws unhandled errors showing "Something went wrong!" boundary
+3. AdminDestinations form has no photo upload/link field
 
 ## Requested Changes (Diff)
 
 ### Add
-- **Homepage** with hero section (banner), featured destinations, interactive map placeholder, tour packages, hotel directory, tour & travel directory, booking section with e-wallet options
-- **Destinations** page: list + detail pages with photo gallery, description, directions
-- **Tour Packages** page: list of packages with pricing and booking
-- **Hotels & Penginapan** page: directory with ratings, amenities, contact
-- **Tour & Travel Directory** page: list of travel agents/services
-- **Booking** page: booking form with e-wallet payment options (OVO, GoPay, DANA, LinkAja)
-- **Admin Panel**: manage destinations, tour packages, hotels, tour agencies, bookings
-- Role-based access: public visitors vs admin
-- Photo galleries with blob storage
+- Photo field in AdminDestinations dialog: text input for photo URL AND file upload button (using ExternalBlob.fromURL and ExternalBlob.fromBytes), storing as mainImage in InputTourDestination
 
 ### Modify
-- N/A (new project)
+- Routes.tsx: Change POINT_A coordinates from lat:-6.5833, lng:107.4667 (Purwakarta) to lat:-6.5700, lng:107.7588 (Subang city center / Alun-Alun Subang). Update label to "Kota Subang".
+- DestinationDetail.tsx: Add error handling to useDestination query so backend errors are caught and displayed gracefully instead of triggering error boundary. Add `isError` check and show "Destinasi tidak dapat dimuat" message.
 
 ### Remove
-- N/A (new project)
+- Nothing removed
 
 ## Implementation Plan
-1. Backend: Destinations CRUD, Tour Packages CRUD, Hotels CRUD, Tour Agencies CRUD, Bookings CRUD, Admin role check
-2. Components: authorization (admin roles), blob-storage (photo galleries)
-3. Frontend: Full multi-page app with navigation, public pages, admin panel
-4. Sample content: Subang destinations (Sari Ater, Ciater, Gunung Tangkuban Parahu, Curug Cinulang, etc.), sample hotels, tour packages
+1. Fix POINT_A in Routes.tsx to Subang coordinates
+2. Add error state handling in DestinationDetail.tsx using isError from useQuery
+3. Add mainImage photo field (URL input + file upload) to AdminDestinations dialog form

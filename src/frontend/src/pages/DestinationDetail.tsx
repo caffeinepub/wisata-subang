@@ -16,20 +16,36 @@ const DEST_IMAGES: Record<string, string> = {
 export default function DestinationDetail() {
   const { id } = useParams({ from: "/layout/destinations/$id" });
   const destId = BigInt(id);
-  const { data, isLoading } = useDestination(destId);
+  const { data, isLoading, isError } = useDestination(destId);
 
-  const dest: TourDestination | null = data
-    ? data[0]
-    : destId < BigInt(SAMPLE_DESTINATIONS.length)
-      ? ({
+  const dest: TourDestination | null = (() => {
+    try {
+      if (data) return (data as [TourDestination, unknown])[0] ?? null;
+      if (destId < BigInt(SAMPLE_DESTINATIONS.length)) {
+        return {
           ...SAMPLE_DESTINATIONS[Number(destId)],
           id: destId,
           createdAt: BigInt(0),
           updatedAt: BigInt(0),
-        } as TourDestination)
-      : null;
+        } as TourDestination;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  })();
 
-  const gallery: string[] = data?.[1]?.map((b) => b.getDirectURL()) || [];
+  const gallery: string[] = (() => {
+    try {
+      return (
+        (data as [unknown, Array<{ getDirectURL(): string }>])?.[1]?.map((b) =>
+          b.getDirectURL(),
+        ) || []
+      );
+    } catch {
+      return [];
+    }
+  })();
 
   if (isLoading) {
     return (
@@ -41,6 +57,28 @@ export default function DestinationDetail() {
           className="animate-spin w-8 h-8 border-2 rounded-full"
           style={{ borderTopColor: "#0E5A3F", borderColor: "#E5E7EB" }}
         />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        data-ocid="destination.error_state"
+      >
+        <div className="text-center">
+          <p className="text-muted-foreground mb-4">
+            Gagal memuat destinasi. Silakan coba lagi.
+          </p>
+          <Link
+            to="/destinations"
+            className="text-sm font-semibold"
+            style={{ color: "#0E5A3F" }}
+          >
+            Kembali ke Destinasi
+          </Link>
+        </div>
       </div>
     );
   }
