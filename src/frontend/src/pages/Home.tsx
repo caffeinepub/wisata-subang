@@ -430,6 +430,7 @@ export default function Home() {
             <h3 className="font-bold mb-4 text-sm">Form Pemesanan Cepat</h3>
             <Link
               to="/booking"
+              search={{ packageId: "", tab: "" }}
               className="block w-full text-center py-3 rounded-full text-white font-semibold"
               style={{ background: "#E67E22" }}
               data-ocid="booking.quick.button"

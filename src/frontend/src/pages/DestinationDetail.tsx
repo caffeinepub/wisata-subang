@@ -302,6 +302,10 @@ export default function DestinationDetail() {
                       )}
                       <Link
                         to="/booking"
+                        search={{
+                          packageId: pkg.id.toString(),
+                          tab: "package",
+                        }}
                         className="mt-auto block text-center py-2 rounded-full text-white font-semibold text-xs"
                         style={{ background: "#E67E22" }}
                         data-ocid={`packages.book.button.${i + 1}`}
@@ -340,6 +344,7 @@ export default function DestinationDetail() {
               </div>
               <Link
                 to="/booking"
+                search={{ packageId: "", tab: "" }}
                 className="mt-4 block text-center py-3 rounded-full text-white font-semibold text-sm"
                 style={{ background: "#E67E22" }}
                 data-ocid="destination.book.button"

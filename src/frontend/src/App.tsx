@@ -81,6 +81,10 @@ const bookingRoute = createRoute({
   getParentRoute: () => layoutRoute,
   path: "/booking",
   component: Booking,
+  validateSearch: (search: Record<string, unknown>) => ({
+    packageId: (search.packageId as string) ?? "",
+    tab: (search.tab as string) ?? "",
+  }),
 });
 
 const loginRoute = createRoute({

@@ -57,6 +57,7 @@ export default function Header() {
           </Link>
           <Link
             to="/booking"
+            search={{ packageId: "", tab: "" }}
             className="text-sm font-medium text-gray-700 hover:text-green-dark transition-colors"
             data-ocid="nav.booking.link"
           >
@@ -137,24 +138,55 @@ export default function Header() {
       {mobileOpen && (
         <div className="md:hidden mt-2 bg-white rounded-2xl shadow-card mx-4 p-4">
           <nav className="flex flex-col gap-3">
-            {[
-              { to: "/destinations", label: "Destinasi" },
-              { to: "/packages", label: "Paket Tour" },
-              { to: "/hotels", label: "Hotel" },
-              { to: "/agencies", label: "Tour & Travel" },
-              { to: "/booking", label: "Booking" },
-              { to: "/rute", label: "Rute" },
-            ].map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                className="text-sm font-medium text-gray-700 py-1"
-                onClick={() => setMobileOpen(false)}
-                data-ocid="nav.mobile.link"
-              >
-                {item.label}
-              </Link>
-            ))}
+            <Link
+              to="/destinations"
+              className="text-sm font-medium text-gray-700 py-1"
+              onClick={() => setMobileOpen(false)}
+              data-ocid="nav.mobile.link"
+            >
+              Destinasi
+            </Link>
+            <Link
+              to="/packages"
+              className="text-sm font-medium text-gray-700 py-1"
+              onClick={() => setMobileOpen(false)}
+              data-ocid="nav.mobile.link"
+            >
+              Paket Tour
+            </Link>
+            <Link
+              to="/hotels"
+              className="text-sm font-medium text-gray-700 py-1"
+              onClick={() => setMobileOpen(false)}
+              data-ocid="nav.mobile.link"
+            >
+              Hotel
+            </Link>
+            <Link
+              to="/agencies"
+              className="text-sm font-medium text-gray-700 py-1"
+              onClick={() => setMobileOpen(false)}
+              data-ocid="nav.mobile.link"
+            >
+              Tour & Travel
+            </Link>
+            <Link
+              to="/booking"
+              search={{ packageId: "", tab: "" }}
+              className="text-sm font-medium text-gray-700 py-1"
+              onClick={() => setMobileOpen(false)}
+              data-ocid="nav.mobile.link"
+            >
+              Booking
+            </Link>
+            <Link
+              to="/rute"
+              className="text-sm font-medium text-gray-700 py-1"
+              onClick={() => setMobileOpen(false)}
+              data-ocid="nav.mobile.link"
+            >
+              Rute
+            </Link>
             {isAdmin && (
               <Link
                 to="/admin"

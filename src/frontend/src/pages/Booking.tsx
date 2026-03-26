@@ -8,8 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSearch } from "@tanstack/react-router";
 import { CheckCircle, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { PaymentMethod } from "../backend";
@@ -41,6 +42,13 @@ const WALLET_INFO = [
 
 export default function Booking() {
   const [success, setSuccess] = useState(false);
+  const { packageId: searchPackageId, tab: searchTab } = useSearch({
+    strict: false,
+  }) as { packageId?: string; tab?: string };
+
+  const defaultBookingType =
+    searchTab === "package" ? "package" : "destination";
+
   const {
     register,
     handleSubmit,
@@ -48,7 +56,10 @@ export default function Booking() {
     setValue,
     formState: { errors },
   } = useForm<BookingForm>({
-    defaultValues: { bookingType: "destination", numGuests: 1 },
+    defaultValues: {
+      bookingType: defaultBookingType as "destination" | "package",
+      numGuests: 1,
+    },
   });
   const createBooking = useCreateBooking();
 
@@ -76,6 +87,14 @@ export default function Booking() {
           updatedAt: BigInt(0),
         }))
   ) as TourPackage[];
+
+  // Pre-select the package from search params once pkgItems are loaded
+  useEffect(() => {
+    if (searchPackageId && pkgItems.length > 0) {
+      setValue("bookingType", "package");
+      setValue("packageId", searchPackageId);
+    }
+  }, [searchPackageId, pkgItems.length, setValue]);
 
   const bookingType = watch("bookingType");
   const selectedPackageId = watch("packageId");
@@ -284,7 +303,10 @@ export default function Booking() {
           ) : (
             <div>
               <Label>Pilih Paket Tour</Label>
-              <Select onValueChange={(v) => setValue("packageId", v)}>
+              <Select
+                value={selectedPackageId || ""}
+                onValueChange={(v) => setValue("packageId", v)}
+              >
                 <SelectTrigger data-ocid="booking.package.select">
                   <SelectValue placeholder="Pilih paket" />
                 </SelectTrigger>
@@ -296,6 +318,18 @@ export default function Booking() {
                   ))}
                 </SelectContent>
               </Select>
+              {selectedPkg && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Harga per orang:{" "}
+                  <span className="font-semibold" style={{ color: "#E67E22" }}>
+                    {new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                      maximumFractionDigits: 0,
+                    }).format(selectedPkg.price)}
+                  </span>
+                </p>
+              )}
             </div>
           )}
 

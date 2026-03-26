@@ -98,6 +98,7 @@ export default function Packages() {
                   </span>
                   <Link
                     to="/booking"
+                    search={{ packageId: pkg.id.toString(), tab: "package" }}
                     className="px-4 py-2 rounded-full text-white text-sm font-semibold"
                     style={{ background: "#E67E22" }}
                     data-ocid={`packages.book.button.${i + 1}`}
