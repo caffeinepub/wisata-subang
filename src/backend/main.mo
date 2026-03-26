@@ -250,7 +250,10 @@ actor {
 
   // Bootstrap admin (only works if no admin exists yet)
   public shared ({ caller }) func bootstrapAdmin() : async () {
-    AccessControl.bootstrapFirstAdmin(accessControlState, caller);
+    if (not accessControlState.adminAssigned) {
+      accessControlState.userRoles.add(caller, #admin);
+      accessControlState.adminAssigned := true;
+    };
   };
 
   // Destination Management

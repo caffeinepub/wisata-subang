@@ -110,6 +110,18 @@ export default function DestinationDetail() {
     : DEST_IMAGES[dest.name] ||
       "/assets/generated/dest-terasering.dim_600x400.jpg";
 
+  const loc = dest.location;
+  const hasLocation =
+    loc &&
+    typeof loc.latitude === "number" &&
+    typeof loc.longitude === "number" &&
+    !Number.isNaN(loc.latitude) &&
+    !Number.isNaN(loc.longitude);
+
+  const mapSrc = hasLocation
+    ? `https://www.openstreetmap.org/export/embed.html?bbox=${loc.longitude - 0.05}%2C${loc.latitude - 0.05}%2C${loc.longitude + 0.05}%2C${loc.latitude + 0.05}&layer=mapnik&marker=${loc.latitude}%2C${loc.longitude}`
+    : null;
+
   return (
     <div className="min-h-screen">
       <div className="relative h-72 md:h-96">
@@ -208,19 +220,21 @@ export default function DestinationDetail() {
                 Pesan Sekarang
               </Link>
             </div>
-            <div
-              className="rounded-2xl overflow-hidden shadow-card"
-              style={{ height: "200px" }}
-            >
-              <iframe
-                src={`https://www.openstreetmap.org/export/embed.html?bbox=${dest.location.longitude - 0.05}%2C${dest.location.latitude - 0.05}%2C${dest.location.longitude + 0.05}%2C${dest.location.latitude + 0.05}&layer=mapnik&marker=${dest.location.latitude}%2C${dest.location.longitude}`}
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                title={`Peta ${dest.name}`}
-                loading="lazy"
-              />
-            </div>
+            {mapSrc && (
+              <div
+                className="rounded-2xl overflow-hidden shadow-card"
+                style={{ height: "200px" }}
+              >
+                <iframe
+                  src={mapSrc}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  title={`Peta ${dest.name}`}
+                  loading="lazy"
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
