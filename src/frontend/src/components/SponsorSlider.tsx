@@ -46,7 +46,7 @@ export default function SponsorSlider() {
   return (
     <div
       className="w-full overflow-hidden bg-white border-b border-gray-100 shadow-sm"
-      style={{ position: "sticky", top: "64px", zIndex: 40, height: "64px" }}
+      style={{ position: "sticky", top: "64px", zIndex: 40, height: "80px" }}
     >
       <div
         className="absolute inset-y-0 left-0 w-12 z-10 pointer-events-none"
@@ -60,28 +60,28 @@ export default function SponsorSlider() {
       <div className="flex items-center h-full">
         <div
           ref={trackRef}
-          className="flex items-center gap-6 will-change-transform"
+          className="flex items-center gap-8 will-change-transform"
           style={{ whiteSpace: "nowrap" }}
         >
           {ALL_SPONSORS.map((sponsor) => (
             <div
               key={sponsor.uid}
-              className="flex items-center gap-2 flex-shrink-0"
+              className="flex items-center gap-3 flex-shrink-0"
               title={sponsor.name}
             >
               <div
-                className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 shadow-sm"
+                className="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 shadow-sm"
                 style={{
                   background: sponsor.color,
-                  fontSize: "9px",
+                  fontSize: "11px",
                   letterSpacing: "0.05em",
                 }}
               >
                 {sponsor.abbr}
               </div>
               <span
-                className="text-xs text-gray-500 font-medium"
-                style={{ minWidth: "60px" }}
+                className="text-sm text-gray-500 font-medium"
+                style={{ minWidth: "70px" }}
               >
                 {sponsor.name}
               </span>
