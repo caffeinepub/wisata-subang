@@ -206,7 +206,7 @@ export default function DestinationDetail() {
 
             <div>
               <h2 className="text-lg font-bold mb-3">Tentang Destinasi</h2>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
                 {dest.description}
               </p>
             </div>
@@ -215,7 +215,7 @@ export default function DestinationDetail() {
                 <Navigation className="w-5 h-5" style={{ color: "#E67E22" }} />
                 Petunjuk Arah
               </h2>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
                 {dest.directions}
               </p>
             </div>

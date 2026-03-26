@@ -8,6 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { Edit, Loader2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -268,21 +269,25 @@ export default function AdminDestinations() {
             </div>
             <div>
               <Label>Deskripsi</Label>
-              <Input
+              <Textarea
                 value={form.description}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, description: e.target.value }))
                 }
+                rows={4}
+                placeholder="Deskripsi lengkap destinasi..."
                 data-ocid="admin.destinations.description.input"
               />
             </div>
             <div>
               <Label>Petunjuk Arah</Label>
-              <Input
+              <Textarea
                 value={form.directions}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, directions: e.target.value }))
                 }
+                rows={4}
+                placeholder="Petunjuk arah menuju destinasi..."
                 data-ocid="admin.destinations.directions.input"
               />
             </div>
