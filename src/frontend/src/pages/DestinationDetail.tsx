@@ -1,9 +1,17 @@
 import { Link, useParams } from "@tanstack/react-router";
-import { ArrowLeft, MapPin, Navigation, Star } from "lucide-react";
-import type { TourDestination } from "../backend";
+import {
+  ArrowLeft,
+  Check,
+  Clock,
+  MapPin,
+  Navigation,
+  Star,
+  Users,
+} from "lucide-react";
+import type { TourDestination, TourPackage } from "../backend";
 import StarRating from "../components/StarRating";
-import { SAMPLE_DESTINATIONS } from "../data/sampleData";
-import { useDestination } from "../hooks/useQueries";
+import { SAMPLE_DESTINATIONS, SAMPLE_PACKAGES } from "../data/sampleData";
+import { useActiveTourPackages, useDestination } from "../hooks/useQueries";
 
 const DEST_IMAGES: Record<string, string> = {
   "Pemandian Air Panas Sari Ater":
@@ -13,10 +21,18 @@ const DEST_IMAGES: Record<string, string> = {
   "Terasering Ciater": "/assets/generated/dest-terasering.dim_600x400.jpg",
 };
 
+const formatIDR = (price: number) =>
+  new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0,
+  }).format(price);
+
 export default function DestinationDetail() {
   const { id } = useParams({ from: "/layout/destinations/$id" });
   const destId = BigInt(id);
   const { data, isLoading, isError } = useDestination(destId);
+  const { data: packagesData } = useActiveTourPackages();
 
   const dest: TourDestination | null = (() => {
     try {
@@ -45,6 +61,17 @@ export default function DestinationDetail() {
     } catch {
       return [];
     }
+  })();
+
+  const packages: TourPackage[] = (() => {
+    if (packagesData && packagesData.length > 0)
+      return packagesData as TourPackage[];
+    return SAMPLE_PACKAGES.map((p, i) => ({
+      ...p,
+      id: BigInt(i),
+      createdAt: BigInt(0),
+      updatedAt: BigInt(0),
+    }));
   })();
 
   if (isLoading) {
@@ -111,16 +138,18 @@ export default function DestinationDetail() {
       "/assets/generated/dest-terasering.dim_600x400.jpg";
 
   const loc = dest.location;
-  const hasLocation =
+  const hasValidLocation =
     loc &&
     typeof loc.latitude === "number" &&
     typeof loc.longitude === "number" &&
     !Number.isNaN(loc.latitude) &&
-    !Number.isNaN(loc.longitude);
+    !Number.isNaN(loc.longitude) &&
+    !(loc.latitude === 0 && loc.longitude === 0);
 
-  const mapSrc = hasLocation
-    ? `https://www.openstreetmap.org/export/embed.html?bbox=${loc.longitude - 0.05}%2C${loc.latitude - 0.05}%2C${loc.longitude + 0.05}%2C${loc.latitude + 0.05}&layer=mapnik&marker=${loc.latitude}%2C${loc.longitude}`
-    : null;
+  const mapLat = hasValidLocation ? loc.latitude : -6.5;
+  const mapLng = hasValidLocation ? loc.longitude : 107.7;
+
+  const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${mapLng - 0.05}%2C${mapLat - 0.05}%2C${mapLng + 0.05}%2C${mapLat + 0.05}&layer=mapnik&marker=${mapLat}%2C${mapLng}`;
 
   return (
     <div className="min-h-screen">
@@ -154,6 +183,27 @@ export default function DestinationDetail() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-2 space-y-6">
+            {/* Map Section - always visible */}
+            <div>
+              <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
+                <MapPin className="w-5 h-5" style={{ color: "#E67E22" }} />
+                Lokasi Destinasi
+              </h2>
+              <div
+                className="rounded-2xl overflow-hidden"
+                style={{ height: "250px" }}
+              >
+                <iframe
+                  src={mapSrc}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  title={`Peta ${dest.name}`}
+                  loading="lazy"
+                />
+              </div>
+            </div>
+
             <div>
               <h2 className="text-lg font-bold mb-3">Tentang Destinasi</h2>
               <p className="text-muted-foreground leading-relaxed">
@@ -189,6 +239,80 @@ export default function DestinationDetail() {
                 </div>
               </div>
             )}
+
+            {/* Tour Packages Section */}
+            {packages.length > 0 && (
+              <div>
+                <h2 className="text-lg font-bold mb-4">Paket Tour Tersedia</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {packages.map((pkg, i) => (
+                    <div
+                      key={pkg.id.toString()}
+                      className="bg-white rounded-2xl shadow-card border border-border p-4 flex flex-col gap-3"
+                      data-ocid={`packages.item.${i + 1}`}
+                    >
+                      <div>
+                        <h3 className="font-bold text-sm leading-tight">
+                          {pkg.name}
+                        </h3>
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                          {pkg.description}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Clock
+                            className="w-3.5 h-3.5"
+                            style={{ color: "#E67E22" }}
+                          />
+                          {pkg.duration.toString()} Hari
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Users
+                            className="w-3.5 h-3.5"
+                            style={{ color: "#0E5A3F" }}
+                          />
+                          Maks {pkg.maxParticipants.toString()} Orang
+                        </span>
+                      </div>
+                      <div
+                        className="font-bold text-base"
+                        style={{ color: "#E67E22" }}
+                      >
+                        {formatIDR(pkg.price)}
+                        <span className="text-xs font-normal text-muted-foreground ml-1">
+                          /orang
+                        </span>
+                      </div>
+                      {pkg.inclusions.length > 0 && (
+                        <ul className="space-y-1">
+                          {pkg.inclusions.slice(0, 3).map((inc) => (
+                            <li
+                              key={inc}
+                              className="flex items-center gap-1.5 text-xs text-muted-foreground"
+                            >
+                              <Check
+                                className="w-3.5 h-3.5 flex-shrink-0"
+                                style={{ color: "#0E5A3F" }}
+                              />
+                              {inc}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      <Link
+                        to="/booking"
+                        className="mt-auto block text-center py-2 rounded-full text-white font-semibold text-xs"
+                        style={{ background: "#E67E22" }}
+                        data-ocid={`packages.book.button.${i + 1}`}
+                      >
+                        Pesan Sekarang
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="space-y-4">
@@ -207,7 +331,10 @@ export default function DestinationDetail() {
                 <div className="flex items-center gap-2">
                   <Star className="w-4 h-4" style={{ color: "#E67E22" }} />
                   <span className="text-sm text-muted-foreground">
-                    {(Number(dest.rating) / 10).toFixed(1)} / 5.0
+                    {dest.rating != null
+                      ? (Number(dest.rating) / 10).toFixed(1)
+                      : "0.0"}{" "}
+                    / 5.0
                   </span>
                 </div>
               </div>
@@ -220,21 +347,6 @@ export default function DestinationDetail() {
                 Pesan Sekarang
               </Link>
             </div>
-            {mapSrc && (
-              <div
-                className="rounded-2xl overflow-hidden shadow-card"
-                style={{ height: "200px" }}
-              >
-                <iframe
-                  src={mapSrc}
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  title={`Peta ${dest.name}`}
-                  loading="lazy"
-                />
-              </div>
-            )}
           </div>
         </div>
       </div>

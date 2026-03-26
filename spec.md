@@ -1,24 +1,27 @@
-# Wisata Subang - Version 7 Fixes
+# Wisata Subang
 
 ## Current State
-App has 3 issues:
-1. Routes page Point A coordinates are set to Purwakarta (~107.4667) instead of Subang (~107.7588)
-2. DestinationDetail page throws unhandled errors showing "Something went wrong!" boundary
-3. AdminDestinations form has no photo upload/link field
+- DestinationDetail shows map only when coordinates are valid; rating shows NaN when undefined
+- No tour packages section on destination detail page
+- AdminPackages already has a price input form
+- Packages page shows active packages from backend (falls back to sample data)
 
 ## Requested Changes (Diff)
 
 ### Add
-- Photo field in AdminDestinations dialog: text input for photo URL AND file upload button (using ExternalBlob.fromURL and ExternalBlob.fromBytes), storing as mainImage in InputTourDestination
+- Tour packages section on DestinationDetail page showing active packages with price, duration, inclusions
+- Default map fallback (center of Subang) when destination has no valid coordinates
 
 ### Modify
-- Routes.tsx: Change POINT_A coordinates from lat:-6.5833, lng:107.4667 (Purwakarta) to lat:-6.5700, lng:107.7588 (Subang city center / Alun-Alun Subang). Update label to "Kota Subang".
-- DestinationDetail.tsx: Add error handling to useDestination query so backend errors are caught and displayed gracefully instead of triggering error boundary. Add `isError` check and show "Destinasi tidak dapat dimuat" message.
+- DestinationDetail: fix NaN rating with defensive check; show map always (default Subang center coords if no valid coords); add packages section below gallery
+- Packages.tsx: ensure it shows real backend data prominently (no functional change needed, already works)
 
 ### Remove
 - Nothing removed
 
 ## Implementation Plan
-1. Fix POINT_A in Routes.tsx to Subang coordinates
-2. Add error state handling in DestinationDetail.tsx using isError from useQuery
-3. Add mainImage photo field (URL input + file upload) to AdminDestinations dialog form
+1. Update DestinationDetail.tsx:
+   - Use Subang default coordinates (-6.5, 107.7) when destination has no valid/nonzero coordinates
+   - Fix rating display with null check
+   - Add useActiveTourPackages hook and render packages section below gallery
+2. No backend changes needed
